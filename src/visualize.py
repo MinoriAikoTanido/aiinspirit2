@@ -3,6 +3,7 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 # Function to parse metadata from filenames
 def parse_filename(filename):
@@ -19,10 +20,13 @@ def parse_filename(filename):
 
 # Function to visualize the distribution
 def visualize_distribution(dataset_path):
+    # Ensure the plots directory exists
+    os.makedirs("data/plots", exist_ok=True)
+    
     # Gather data from all files in the directory
     data = []
     for root, dirs, files in os.walk(dataset_path):
-        for file in files:
+        for file in tqdm(files, desc="Processing files"):
             if file.endswith(".wav"):
                 metadata = parse_filename(file)
                 data.append(metadata)
@@ -37,7 +41,8 @@ def visualize_distribution(dataset_path):
     plt.xlabel("Emotion")
     plt.ylabel("Count")
     plt.xticks(rotation=0)
-    plt.show()
+    plt.savefig("data/plots/emotion_distribution.png")
+    plt.close()
     
     # Visualize distribution of intensity levels
     plt.figure(figsize=(10, 6))
@@ -46,7 +51,8 @@ def visualize_distribution(dataset_path):
     plt.xlabel("Intensity")
     plt.ylabel("Count")
     plt.xticks(rotation=0)
-    plt.show()
+    plt.savefig("data/plots/intensity_distribution.png")
+    plt.close()
     
     # Visualize distribution across actors
     plt.figure(figsize=(10, 6))
@@ -55,4 +61,5 @@ def visualize_distribution(dataset_path):
     plt.xlabel("Actor ID")
     plt.ylabel("Count")
     plt.xticks(rotation=90)
-    plt.show()
+    plt.savefig("data/plots/actor_distribution.png")
+    plt.close()
