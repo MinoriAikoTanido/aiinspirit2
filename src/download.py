@@ -1,23 +1,38 @@
-
 import os
-import subprocess
+import requests
+from tqdm import tqdm
 
 def download_dataset():
-    """
-    Checks if the 'data/' directory exists, and if it does, clones the dataset from
-    the GitHub repository into this directory.
-    """
-    data_dir = "data/"
-    repo_url = "https://github.com/MinoriAikoTanido/aiinspirit2.git"
+    dataset_path = "data/archive.zip"
+    url = "https://www.kaggle.com/api/v1/datasets/download/uwrfkaggler/ravdess-emotional-speech-audio"
+    
+    # Check if the dataset already exists
+    if os.path.exists(dataset_path):
+        print("Dataset already exists. Skipping download.")
+        return
+    
+    print("Dataset not found. Downloading...")
+    
+    # Create the data directory if it doesn't exist
+    os.makedirs(os.path.dirname(dataset_path), exist_ok=True)
+    
+    # Stream the download and add a progress bar
+    response = requests.get(url, stream=True)
+    response.raise_for_status()  # Check if the request was successful
 
-    # Check if the 'data/' directory exists
-    if os.path.exists(data_dir):
-        # Clone the repository into the 'data/' directory
-        try:
-            print(f"Downloading dataset into {data_dir}...")
-            subprocess.run(["git", "clone", repo_url, data_dir], check=True)
-            print("Dataset downloaded successfully.")
-        except subprocess.CalledProcessError:
-            print("Failed to download the dataset.")
-    else:
-        print(f"The directory '{data_dir}' does not exist. Please create it first.")
+    # Get the total file size
+    total_size = int(response.headers.get("content-length", 0))
+    
+    # Download the file with progress bar
+    with open(dataset_path, "wb") as file, tqdm(
+        desc="Downloading",
+        total=total_size,
+        unit="B",
+        unit_scale=True,
+        unit_divisor=1024,
+    ) as progress_bar:
+        for chunk in response.iter_content(chunk_size=8192):
+            file.write(chunk)
+            progress_bar.update(len(chunk))
+    
+    print("Download complete.")
