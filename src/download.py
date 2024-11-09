@@ -37,9 +37,9 @@ def download_dataset():
                 progress_bar.update(len(chunk))
         
         print("Download complete.")
-    
-    # Unzipping the dataset
-    print("Extracting files...")
-    with zipfile.ZipFile(dataset_path, 'r') as zip_ref:
-        zip_ref.extractall(extract_path)
-    print("Extraction complete.")
+        
+        # Unzipping the dataset
+        print("Extracting files...")
+        with zipfile.ZipFile(dataset_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_path)
+        print("Extraction complete.")
