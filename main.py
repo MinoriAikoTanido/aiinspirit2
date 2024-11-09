@@ -1,12 +1,4 @@
+from src.download import download_dataset
 
-def main():
-
-  # Download the dataset
-
-  # Preprocess the data 
-
-  pass
-
-
-if __name__ == '__main__':
-  main()
+if __name__ == "__main__":
+    download_dataset()
